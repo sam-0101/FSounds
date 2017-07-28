@@ -1,0 +1,12 @@
+<resources>
+
+    <!-- App Name -->
+    <string name="app_name">FSounds</string>
+
+    <string name="error">Errore. Riprovare.</string>
+
+    <!-- Toolbar Menu -->
+    <string name="tm_search">Search</string>
+    <string name="search_hint">Search…</string>
+
+</resources>
