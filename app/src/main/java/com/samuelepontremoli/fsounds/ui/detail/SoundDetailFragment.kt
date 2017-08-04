@@ -62,7 +62,7 @@ class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView {
         playPause.changeMode(FloatingMusicActionButton.Mode.PLAY_TO_STOP)
         playPause.setOnMusicFabClickListener(object : FloatingMusicActionButton.OnMusicFabClickListener {
             override fun onClick(view: View) {
-                isPlaying = !isPlaying
+                presenter?.onSoundPlayed()
             }
         })
     }
@@ -144,7 +144,6 @@ class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView {
         super.onPause()
         if (isPlaying) {
             isPlaying = false
-            playPause.playAnimation()
         }
         presenter?.unsubscribe()
     }

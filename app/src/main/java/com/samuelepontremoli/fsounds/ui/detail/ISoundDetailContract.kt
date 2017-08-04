@@ -32,6 +32,8 @@ interface ISoundDetailContract {
 
         fun loadSound()
 
+        fun onSoundPlayed()
+
     }
 
 }
