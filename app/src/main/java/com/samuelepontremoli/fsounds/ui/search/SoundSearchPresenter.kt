@@ -9,7 +9,7 @@ import io.reactivex.schedulers.Schedulers
 /**
  * FSounds - Created by s.pontremoli on 24/07/2017.
  */
-class SoundSearchPresenter(val view: ISoundSearchContract.ISoundSearchView) : ISoundSearchContract.ISoundSearchPresenter {
+class SoundSearchPresenter(val view: ISoundSearchContract.ISoundSearchView, val query: String = "asd") : ISoundSearchContract.ISoundSearchPresenter {
 
     private val subscriptions: CompositeDisposable
 
@@ -27,7 +27,7 @@ class SoundSearchPresenter(val view: ISoundSearchContract.ISoundSearchView) : IS
         //Set api repository
         val freeSoundRepository = FreeSoundRepositoryProvider.provideFreeSoundRepository()
 
-        val freeSoundFlow = freeSoundRepository.getSearchResults("amen")
+        val freeSoundFlow = freeSoundRepository.getSearchResults(query)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({

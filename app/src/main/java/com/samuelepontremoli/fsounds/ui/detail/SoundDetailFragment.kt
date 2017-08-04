@@ -29,8 +29,6 @@ class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView {
 
     private var soundDetailAdapter: SoundTagsAdapter? = null
 
-    private var isPlaying = false
-
     companion object {
         val TAG = "SoundDetailFragment"
         val ROUND_POSITIONS = 2
@@ -62,7 +60,7 @@ class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView {
         playPause.changeMode(FloatingMusicActionButton.Mode.PLAY_TO_STOP)
         playPause.setOnMusicFabClickListener(object : FloatingMusicActionButton.OnMusicFabClickListener {
             override fun onClick(view: View) {
-                presenter?.onSoundPlayed()
+                presenter?.shouldPlayOrStopSound()
             }
         })
     }
@@ -87,7 +85,7 @@ class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView {
         soundImage.setHeightRatio(DETAIL_IMG_HEIGHT.toFloat() / DETAIL_IMG_WIDTH.toFloat())
         soundImage.loadFromUrl(sound.images.waveformL)
         soundDescription.text = sound.description
-        ratingView.text = "${sound.avgRating}/${sound.numRatings}"
+        ratingView.text = "${sound.avgRating.round(ROUND_POSITIONS)}/${sound.numRatings}"
         numDownloadsView.text = "Downloaded ${sound.numDownloads} times"
         populateTagView(sound.tags)
 
@@ -142,9 +140,6 @@ class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView {
 
     override fun onPause() {
         super.onPause()
-        if (isPlaying) {
-            isPlaying = false
-        }
         presenter?.unsubscribe()
     }
 

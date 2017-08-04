@@ -14,6 +14,8 @@ class SoundDetailPresenter(val view: ISoundDetailContract.ISoundDetailView, val 
 
     private val subscriptions: CompositeDisposable
 
+    private var playBackUrl: String = ""
+
     init {
         subscriptions = CompositeDisposable()
         view.setPresenter(this)
@@ -34,6 +36,7 @@ class SoundDetailPresenter(val view: ISoundDetailContract.ISoundDetailView, val 
                 .subscribe({
                     data ->
                     view.onSoundLoadedSuccess(data)
+                    playBackUrl = data.url
                 }, {
                     error ->
                     view.onSoundLoadedFailure(error)
@@ -46,7 +49,7 @@ class SoundDetailPresenter(val view: ISoundDetailContract.ISoundDetailView, val 
         subscriptions.add(freeSoundFlow)
     }
 
-    override fun onSoundPlayed() {
+    override fun shouldPlayOrStopSound() {
 
     }
 

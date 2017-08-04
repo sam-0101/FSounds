@@ -32,7 +32,7 @@ interface ISoundDetailContract {
 
         fun loadSound()
 
-        fun onSoundPlayed()
+        fun shouldPlayOrStopSound()
 
     }
 
