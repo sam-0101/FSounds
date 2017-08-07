@@ -49,10 +49,6 @@ class SoundDetailPresenter(val view: ISoundDetailContract.ISoundDetailView, val 
         subscriptions.add(freeSoundFlow)
     }
 
-    override fun shouldPlayOrStopSound() {
-
-    }
-
     override fun unsubscribe() {
         subscriptions.clear()
     }

@@ -67,4 +67,6 @@ dependencies {
 
     compile 'com.github.timrijckaert:FloatingMusicActionButton:v2.0.4'
 
+    compile 'com.google.android.exoplayer:exoplayer-core:r2.4.4'
+
 }

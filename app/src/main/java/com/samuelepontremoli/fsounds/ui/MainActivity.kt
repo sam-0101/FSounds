@@ -1,16 +1,14 @@
 package com.samuelepontremoli.fsounds.ui
 
-import android.app.SearchManager
-import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.samuelepontremoli.fsounds.R
 import com.samuelepontremoli.fsounds.commons.BaseActivity
 import com.samuelepontremoli.fsounds.commons.BasePresenter
+import com.samuelepontremoli.fsounds.player.SoundPlayer
 import com.samuelepontremoli.fsounds.ui.detail.SoundDetailFragment
 import com.samuelepontremoli.fsounds.ui.detail.SoundDetailPresenter
 import com.samuelepontremoli.fsounds.ui.search.SoundSearchFragment
@@ -21,11 +19,13 @@ import com.samuelepontremoli.fsounds.ui.search.SoundSearchPresenter
  */
 class MainActivity : BaseActivity() {
 
-    private var presenter: BasePresenter? = null
-
     private val toolbar: Toolbar by lazy { findViewById(R.id.mainToolbar) as Toolbar }
 
     private lateinit var toolbarMenu: Menu
+
+    private var presenter: BasePresenter? = null
+
+    private var soundPlayer: SoundPlayer? = null
 
     companion object {
         val BACK_BTN_THRESHOLD = 2
@@ -52,6 +52,7 @@ class MainActivity : BaseActivity() {
     fun initDetailFragment(soundId: Int) {
         val detailFragment = SoundDetailFragment.newInstance()
         presenter = SoundDetailPresenter(detailFragment, soundId)
+        soundPlayer = SoundPlayer(detailFragment, baseContext)
         changeFragment(detailFragment, false, SoundDetailFragment.TAG)
         showBackButton()
         hideSearch()
@@ -66,12 +67,10 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initSearch(menu: Menu) {
-        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val searchView = menu.findItem(R.id.search).actionView as SearchView
-        // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
 //        searchView.background = ContextCompat.getDrawable(this, R.drawable.side_nav_bar)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
             override fun onQueryTextSubmit(query: String?): Boolean {
                 val searchFragment = SoundSearchFragment.newInstance()
                 if (query != null) {
@@ -79,12 +78,14 @@ class MainActivity : BaseActivity() {
                 }
                 changeFragment(searchFragment, true, SoundSearchFragment.TAG)
                 hideKeyboard()
+                hideSearchView()
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 return true
             }
+
         })
     }
 
@@ -98,6 +99,7 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
+        soundPlayer?.stopPlayback()
         val backStackEntryCount = supportFragmentManager.backStackEntryCount
         if (backStackEntryCount == BACK_BTN_THRESHOLD) {
             hideBackButton()
@@ -116,7 +118,13 @@ class MainActivity : BaseActivity() {
 
     private fun hideSearch() {
         val item = toolbarMenu.findItem(R.id.search)
+        item.collapseActionView()
         item.setVisible(false)
+    }
+
+    private fun hideSearchView() {
+        val item = toolbarMenu.findItem(R.id.search)
+        item.collapseActionView()
     }
 
     private fun showSearch() {

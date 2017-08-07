@@ -32,8 +32,6 @@ interface ISoundDetailContract {
 
         fun loadSound()
 
-        fun shouldPlayOrStopSound()
-
     }
 
 }

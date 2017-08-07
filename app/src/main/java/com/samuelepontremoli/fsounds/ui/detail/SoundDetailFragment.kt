@@ -2,6 +2,7 @@ package com.samuelepontremoli.fsounds.ui.detail
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.samuelepontremoli.fsounds.R
 import com.samuelepontremoli.fsounds.network.SoundDetail
+import com.samuelepontremoli.fsounds.player.ISoundPlayerContract
 import com.samuelepontremoli.fsounds.utils.loadFromUrl
 import com.samuelepontremoli.fsounds.utils.makeGone
 import com.samuelepontremoli.fsounds.utils.makeVisible
@@ -23,9 +25,11 @@ import kotlinx.android.synthetic.main.view_loading.*
 /**
  * FSounds - Created by s.pontremoli on 26/07/2017.
  */
-class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView {
+class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView, ISoundPlayerContract.SoundPlayerView {
 
     private var presenter: SoundDetailPresenter? = null
+
+    private var playerPresenter: ISoundPlayerContract.SoundPlayerPresenter? = null
 
     private var soundDetailAdapter: SoundTagsAdapter? = null
 
@@ -60,7 +64,7 @@ class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView {
         playPause.changeMode(FloatingMusicActionButton.Mode.PLAY_TO_STOP)
         playPause.setOnMusicFabClickListener(object : FloatingMusicActionButton.OnMusicFabClickListener {
             override fun onClick(view: View) {
-                presenter?.shouldPlayOrStopSound()
+                playerPresenter?.shouldPlayOrStopSound()
             }
         })
     }
@@ -79,6 +83,8 @@ class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView {
     }
 
     override fun onSoundLoadedSuccess(sound: SoundDetail) {
+        Log.d("asd", sound.toString())
+        playerPresenter?.setMediaSource(sound.previews.previewHqMp3)
         soundTitle.text = sound.name
         soundUsername.text = "by ${sound.username}"
         soundDuration.text = "${sound.duration.round(ROUND_POSITIONS)}s"
@@ -114,23 +120,19 @@ class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView {
     }
 
     override fun showLoading() {
-        loadingView.makeVisible()
+        loadingView?.makeVisible()
     }
 
     override fun hideLoading() {
-        loadingView.makeGone()
+        loadingView?.makeGone()
     }
 
     override fun showError() {
-        errorView.makeVisible()
+        errorView?.makeVisible()
     }
 
     override fun hideError() {
-        errorView.makeGone()
-    }
-
-    override fun setPresenter(presenter: ISoundDetailContract.ISoundDetailPresenter) {
-        this.presenter = presenter as SoundDetailPresenter
+        errorView?.makeGone()
     }
 
     override fun onResume() {
@@ -145,6 +147,26 @@ class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView {
 
     override fun onDestroy() {
         super.onDestroy()
+    }
+
+    override fun onPlaybackEnded() {
+        playPause?.playAnimation()
+    }
+
+    override fun onProgressUpdated() {
+        //TODO
+    }
+
+    override fun onPlaybackError() {
+        //TODO
+    }
+
+    override fun setPresenter(presenter: ISoundDetailContract.ISoundDetailPresenter) {
+        this.presenter = presenter as SoundDetailPresenter
+    }
+
+    override fun setPlayerPresenter(controller: ISoundPlayerContract.SoundPlayerPresenter) {
+        this.playerPresenter = controller
     }
 
 }
