@@ -99,8 +99,6 @@ class SoundSearchFragment : Fragment(), ISoundSearchContract.ISoundSearchView, S
         presenter?.unsubscribe()
     }
 
-    override fun soundClicked(soundId: Int) {
-        (activity as MainActivity).initDetailFragment(soundId)
-    }
+    override fun soundClicked(soundId: Int) = (activity as MainActivity).initDetailFragment(soundId)
 
 }

@@ -21,6 +21,9 @@ interface FreeSoundService {
     @GET("apiv2/search/text/")
     fun getTextSearch(@Query("query") query: String, @Query("token") token: String): Flowable<SearchResult>
 
+    @GET("/apiv2/search/target/")
+    fun getTextFilterSearch(@Query("filter") filter: String, @Query("token") token: String): Flowable<SearchResult>
+
     @GET("apiv2/sounds/{id}/")
     fun getSoundDetail(@Path("id") id: Int, @Query("token") token: String): Flowable<SoundDetail>
 

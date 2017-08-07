@@ -31,7 +31,9 @@ interface ISoundSearchContract {
 
     interface ISoundSearchPresenter : BasePresenter {
 
-        fun loadSounds()
+        fun loadSoundsFromText()
+
+        fun loadSoundsFromTag()
 
     }
 

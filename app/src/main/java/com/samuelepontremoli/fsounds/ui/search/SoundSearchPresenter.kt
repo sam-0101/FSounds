@@ -9,9 +9,16 @@ import io.reactivex.schedulers.Schedulers
 /**
  * FSounds - Created by s.pontremoli on 24/07/2017.
  */
-class SoundSearchPresenter(val view: ISoundSearchContract.ISoundSearchView, val query: String = "asd") : ISoundSearchContract.ISoundSearchPresenter {
+class SoundSearchPresenter(val view: ISoundSearchContract.ISoundSearchView, val query: String) : ISoundSearchContract.ISoundSearchPresenter {
 
     private val subscriptions: CompositeDisposable
+
+    var mode = MODE_TEXT_SEARCH
+
+    companion object {
+        val MODE_TEXT_SEARCH = 1
+        val MODE_TAG_SEARCH = 2
+    }
 
     init {
         subscriptions = CompositeDisposable()
@@ -20,14 +27,38 @@ class SoundSearchPresenter(val view: ISoundSearchContract.ISoundSearchView, val 
 
     override fun subscribe() {
         view.showLoading()
-        loadSounds()
+        when(mode) {
+            MODE_TEXT_SEARCH -> loadSoundsFromText()
+            MODE_TAG_SEARCH -> loadSoundsFromTag()
+        }
     }
 
-    override fun loadSounds() {
+    override fun loadSoundsFromText() {
         //Set api repository
         val freeSoundRepository = FreeSoundRepositoryProvider.provideFreeSoundRepository()
 
         val freeSoundFlow = freeSoundRepository.getSearchResults(query)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    data ->
+                    view.onSoundsLoadedSuccess(data.results)
+                }, {
+                    error ->
+                    view.onSoundsLoadedFailure(error)
+                }, {
+                    view.onSoundsLoadedComplete()
+                    view.hideLoading()
+                    view.hideError()
+                })
+
+        subscriptions.add(freeSoundFlow)
+    }
+
+    override fun loadSoundsFromTag() {
+        val freeSoundRepository = FreeSoundRepositoryProvider.provideFreeSoundRepository()
+
+        val freeSoundFlow = freeSoundRepository.getTextFilteredSearchResults("tag:$query")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({

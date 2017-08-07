@@ -13,6 +13,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import com.samuelepontremoli.fsounds.utils.LOG_TAG
 
 
 /**
@@ -58,6 +59,8 @@ class SoundPlayer(val playerView: ISoundPlayerContract.SoundPlayerView, context:
 //        playerView.onStopSound()
     }
 
+    /********************* ExoPlayer Callbacks *********************/
+
     override fun onPlayerError(error: ExoPlaybackException?) {
         error?.printStackTrace()
         playerView.onPlaybackError()
@@ -68,29 +71,28 @@ class SoundPlayer(val playerView: ISoundPlayerContract.SoundPlayerView, context:
     }
 
     override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {
-        //TODO
+        Log.d(LOG_TAG, "onPlaybackParametersChanged")
     }
 
     override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
-        //TODO
+        Log.d(LOG_TAG, "onTracksChanged")
     }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-        Log.d("asd", playbackState.toString())
-        if(playbackState == ExoPlayer.STATE_ENDED) {
+        if (playbackState == ExoPlayer.STATE_ENDED) {
             player.playWhenReady = false
             isPlaying = false
-            player.seekTo(0,0)
+            player.seekTo(0, 0)
             playerView.onPlaybackEnded()
         }
     }
 
     override fun onLoadingChanged(isLoading: Boolean) {
-        //TODO
+        Log.d(LOG_TAG, "onLoadingChanged: isLoading = " + isLoading)
     }
 
     override fun onPositionDiscontinuity() {
-        //TODO
+        Log.d(LOG_TAG, "onPositionDiscontinuity")
     }
 
 }

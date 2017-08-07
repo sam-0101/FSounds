@@ -13,6 +13,10 @@ class FreeSoundRepository(val apiService: FreeSoundService) {
         return apiService.getTextSearch(query, FREE_SOUND_KEY)
     }
 
+    fun getTextFilteredSearchResults(filter: String): Flowable<SearchResult> {
+        return apiService.getTextFilterSearch(filter, FREE_SOUND_KEY)
+    }
+
     fun getSoundDetail(id: Int): Flowable<SoundDetail> {
         return apiService.getSoundDetail(id, FREE_SOUND_KEY)
     }

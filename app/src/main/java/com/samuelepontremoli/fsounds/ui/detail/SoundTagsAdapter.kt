@@ -10,10 +10,10 @@ import com.samuelepontremoli.fsounds.utils.inflate
 /**
  * FSounds - Created by s.pontremoli on 28/07/2017.
  */
-class SoundTagsAdapter(var tags: MutableList<String>) : RecyclerView.Adapter<SoundTagsAdapter.SoundTagsHolder>() {
+class SoundTagsAdapter(var tags: MutableList<String>, val clickListener: TagItemClickListener) : RecyclerView.Adapter<SoundTagsAdapter.SoundTagsHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SoundTagsHolder {
-        return SoundTagsHolder(parent.inflate(R.layout.item_sound_tag))
+        return SoundTagsHolder(parent.inflate(R.layout.item_sound_tag), clickListener)
     }
 
     override fun onBindViewHolder(holder: SoundTagsHolder, position: Int) {
@@ -32,16 +32,20 @@ class SoundTagsAdapter(var tags: MutableList<String>) : RecyclerView.Adapter<Sou
         tags.clear()
     }
 
-    class SoundTagsHolder(itemView: View?): RecyclerView.ViewHolder(itemView) {
+    class SoundTagsHolder(itemView: View?, val clickListener: TagItemClickListener): RecyclerView.ViewHolder(itemView) {
 
         val tagTitle: TextView? = itemView?.findViewById(R.id.tagTitle)
 
         fun  bind(tag: String) {
             tagTitle?.setText(tag)
+            itemView.setOnClickListener { clickListener.tagClicked(tag) }
         }
 
     }
 
+    interface TagItemClickListener {
+        fun tagClicked(tagName: String)
+    }
 
 }
 

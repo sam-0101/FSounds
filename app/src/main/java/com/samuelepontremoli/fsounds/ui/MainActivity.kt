@@ -44,7 +44,7 @@ class MainActivity : BaseActivity() {
     private fun initDefaultFragment() {
         val searchFragment = SoundSearchFragment.newInstance()
         if (presenter == null) {
-            presenter = SoundSearchPresenter(searchFragment)
+            presenter = SoundSearchPresenter(searchFragment, "amen")
         }
         changeFragment(searchFragment, true, SoundSearchFragment.TAG)
     }
@@ -56,6 +56,26 @@ class MainActivity : BaseActivity() {
         changeFragment(detailFragment, false, SoundDetailFragment.TAG)
         showBackButton()
         hideSearch()
+    }
+
+    fun initTextSearchFragment(query: String?) {
+        val searchFragment = SoundSearchFragment.newInstance()
+        if (query != null) {
+            presenter = SoundSearchPresenter(searchFragment, query)
+        }
+        (presenter as SoundSearchPresenter).mode = SoundSearchPresenter.MODE_TEXT_SEARCH
+        changeFragment(searchFragment, false, SoundSearchFragment.TAG)
+        hideKeyboard()
+        hideSearchView()
+    }
+
+    fun initSearchByTagFragment(tagName: String) {
+        val searchFragment = SoundSearchFragment.newInstance()
+        presenter = SoundSearchPresenter(searchFragment, tagName)
+        (presenter as SoundSearchPresenter).mode = SoundSearchPresenter.MODE_TAG_SEARCH
+        changeFragment(searchFragment, false, SoundSearchFragment.TAG)
+        showBackButton()
+        showSearch()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -72,13 +92,7 @@ class MainActivity : BaseActivity() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String?): Boolean {
-                val searchFragment = SoundSearchFragment.newInstance()
-                if (query != null) {
-                    presenter = SoundSearchPresenter(searchFragment, query)
-                }
-                changeFragment(searchFragment, true, SoundSearchFragment.TAG)
-                hideKeyboard()
-                hideSearchView()
+                initTextSearchFragment(query)
                 return true
             }
 

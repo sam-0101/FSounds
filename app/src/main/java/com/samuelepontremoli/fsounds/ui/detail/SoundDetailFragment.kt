@@ -2,7 +2,6 @@ package com.samuelepontremoli.fsounds.ui.detail
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import com.google.android.flexbox.JustifyContent
 import com.samuelepontremoli.fsounds.R
 import com.samuelepontremoli.fsounds.network.SoundDetail
 import com.samuelepontremoli.fsounds.player.ISoundPlayerContract
+import com.samuelepontremoli.fsounds.ui.MainActivity
 import com.samuelepontremoli.fsounds.utils.loadFromUrl
 import com.samuelepontremoli.fsounds.utils.makeGone
 import com.samuelepontremoli.fsounds.utils.makeVisible
@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.view_loading.*
 /**
  * FSounds - Created by s.pontremoli on 26/07/2017.
  */
-class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView, ISoundPlayerContract.SoundPlayerView {
+class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView, ISoundPlayerContract.SoundPlayerView, SoundTagsAdapter.TagItemClickListener {
 
     private var presenter: SoundDetailPresenter? = null
 
@@ -72,9 +72,9 @@ class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView, I
     private fun initTagView() {
         val flexLayoutManager = FlexboxLayoutManager(context)
         flexLayoutManager.flexDirection = FlexDirection.ROW
-        flexLayoutManager.setJustifyContent(JustifyContent.FLEX_START)
-        tagView.setLayoutManager(flexLayoutManager)
-        soundDetailAdapter = SoundTagsAdapter(mutableListOf())
+        flexLayoutManager.justifyContent = JustifyContent.FLEX_START
+        tagView.layoutManager = flexLayoutManager
+        soundDetailAdapter = SoundTagsAdapter(mutableListOf(), this)
         tagView.adapter = soundDetailAdapter
     }
 
@@ -83,7 +83,6 @@ class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView, I
     }
 
     override fun onSoundLoadedSuccess(sound: SoundDetail) {
-        Log.d("asd", sound.toString())
         playerPresenter?.setMediaSource(sound.previews.previewHqMp3)
         soundTitle.text = sound.name
         soundUsername.text = "by ${sound.username}"
@@ -168,5 +167,7 @@ class SoundDetailFragment : Fragment(), ISoundDetailContract.ISoundDetailView, I
     override fun setPlayerPresenter(controller: ISoundPlayerContract.SoundPlayerPresenter) {
         this.playerPresenter = controller
     }
+
+    override fun tagClicked(tagName: String) = (activity as MainActivity).initSearchByTagFragment(tagName)
 
 }
